@@ -383,12 +383,15 @@ function Install-Tentacle {
         Write-Verbose "Tentacle Home directory does not exist. Creating..."
         New-Item -Path "$tentacleHomeDirectory" -ItemType Directory | Out-Null
     }
+    # Don't remove it, but allow it to install if it is already there
     $tentaclePath = "$tentacleHomeDirectory\Tentacle.msi"
-    if ((Test-Path $tentaclePath) -eq $true) {
-        Remove-Item $tentaclePath -force
+    #if ((Test-Path $tentaclePath) -eq $true) {
+    #    Remove-Item $tentaclePath -force
+    #}
+    if ((Test-Path $tentaclePath) -eq $false) {
+        Write-Verbose "Downloading Octopus Tentacle MSI from $actualTentacleDownloadUrl to $tentaclePath"
+        Request-File $actualTentacleDownloadUrl $tentaclePath
     }
-    Write-Verbose "Downloading Octopus Tentacle MSI from $actualTentacleDownloadUrl to $tentaclePath"
-    Request-File $actualTentacleDownloadUrl $tentaclePath
 
     Write-Verbose "Installing MSI..."
     if (-not (Test-Path $env:TEMP)) {
